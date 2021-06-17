@@ -45,3 +45,12 @@ This allows you to easily start sequences/animations using dynamic values.
 A bonus utility intended for animation libraries. Creates a small "functable" using `function` which will cause it to always run as a coroutine. In essence, it returns a function which works with the wait and loop functions provided by CBTools.
 Every time the returned function is called, it resumes execution once. If the function previously concluded, it starts from the beginning.
 Contrast to `cbtools.queue`, which runs the given function only once.
+
+-----------------------
+
+### An Advanced Note:
+The only thing you truly need to know about Lua's coroutines to use this library is this: a coroutine is in essence a function that runs until `coroutine.yield()` is called, and then it pauses. When it's resumed later, it continues moving from that same point forwards.
+
+The function `coroutine.status` can tell you you whether a coroutine has finished executing all the way. When one is paused and waiting to be resumed, the result is `"suspended"`. Once it has been completed, the state becomes `"dead"`. You can use this alongside `cbtools.WaitUntil` to hold off on an action until a series of other coroutines have ended; this is used in the example to end the wave at the right time.
+
+All this library does is resume coroutines created using `cbtools.queue` every frame until they end. Every trick this library does is due to a clever use of `coroutine.yield`, which means you can make use of it yourself. I've covered what I believe to be the only truly necessary functions for the domain of CYF: everything else is up to your imagination.

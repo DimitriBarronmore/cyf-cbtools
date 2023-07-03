@@ -59,6 +59,27 @@ utils.waitUntil = function(cond)
 	end
 end
 
+utils.waitComplete = function(...)
+	while true do
+		local at_least_one_incomplete = false
+		local argument_list = {...}
+		for _, routine in ipairs(argument_list) do
+			if type(routine) ~= "thread" then
+				error("attempt to wait for non-coroutine")
+			end
+			if coroutine.status(routine) ~= "dead" then
+				at_least_one_incomplete = true
+				break
+			end
+		end
+		if at_least_one_incomplete then
+			coroutine.yield()
+		else
+			break
+		end
+	end
+end
+
 utils.doFor = function(iterations, func)
 	if iterations == nil then error("no count given", 2)
 	elseif type(iterations) ~= "number" then error("count argument must be a number", 2) end
